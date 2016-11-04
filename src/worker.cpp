@@ -1,4 +1,5 @@
 #include "headers/worker.h"
+#include <thread>
 
 Worker::Worker()
 {
@@ -13,9 +14,8 @@ Worker::Worker()
 
     // Get instance of singleton class
     bdInstance = BaseData::getInstance();
-    //Fork thread for continual connection
-//    t = new std::thread(&Worker::mainThread);
-//    t.start();
+   //Fork thread for continual connection
+
 }
 
 void Worker::extractAndUpdate()
@@ -28,7 +28,7 @@ void Worker::extractAndUpdate()
 
     /********** Query to select all words from database with min count************/
     QSqlQuery query(db);
-    status = query.prepare("SELECT words FROM vocabRecords where access_count = (select min(access_count) from vocabRecords)");
+    status = query.prepare("SELECT word FROM VocabRecords where access_count = (select min(access_count) from vocabRecords)");
     if(status == false || !query.exec() )
     {
         qDebug() << "Database error : " << query.lastError();
@@ -46,7 +46,7 @@ void Worker::extractAndUpdate()
     /********** Query to fetch word from database ************/
     QString extractedWord = wordList.at(rand);
     QSqlQuery queryFetchWord(db);
-    status = queryFetchWord.prepare("SELECT word, meaning,example FROM vocabRecords where word = :extractedWord");
+    status = queryFetchWord.prepare("SELECT word, meaning,example FROM VocabRecords where word = :extractedWord");
     queryFetchWord.bindValue(":extractedWord", extractedWord);
 
      if(status == false || !queryFetchWord.exec() )
@@ -68,7 +68,7 @@ void Worker::extractAndUpdate()
      /********** Query to update last access time ************/
      QSqlQuery updateAccessTimeQuery(db);
      int last_access = QDateTime::currentMSecsSinceEpoch()/1000;
-     status = updateAccessTimeQuery.prepare("update vocabRecords set last_access=:last_access where word=:word");
+     status = updateAccessTimeQuery.prepare("update VocabRecords set last_access=:last_access where word=:word");
      updateAccessTimeQuery.bindValue(":last_access", last_access);
      updateAccessTimeQuery.bindValue(":word", extractedWord);
 
@@ -82,7 +82,7 @@ void Worker::extractAndUpdate()
      QSqlQuery updateCountQuery(db);
 
      // increment the access_count of the word
-     status = updateCountQuery.prepare("update vocabRecords set access_count=access_count + 1 where word=:word");
+     status = updateCountQuery.prepare("update VocabRecords set access_count=access_count + 1 where word=:word");
      updateCountQuery.bindValue(":word", extractedWord);
      if(status == false || !updateCountQuery.exec())
      {

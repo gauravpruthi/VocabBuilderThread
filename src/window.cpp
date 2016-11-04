@@ -25,9 +25,9 @@ Window::Window()
 
     worker = new Worker();
 
+    std::thread thread(&Window::mainThread, this);
+    thread.detach();
     //std::thread t(&Window::mainThread);
-
-
 
 }
 
@@ -38,8 +38,9 @@ void Window::mainThread()
     {
 
         worker->extractAndUpdate();
-        //BaseData *instance = BaseData::getInstance();
-
+        //Clear head and body
+        head = "";
+        body = "";
         head.append(BaseData::getInstance()->getWord());
         head.append("\n\n");
         body.append("Meaning : ");
@@ -49,7 +50,7 @@ void Window::mainThread()
         body.append(BaseData::getInstance()->getExample());
         showMessage();
         // Clear the data after use...it will be filled later after the next call..
-        QThread::sleep(1500);
+        QThread::sleep(30);
     }
 }
 

@@ -23,6 +23,8 @@ class Window : public QDialog
 
 public:
     Window();
+    void mainThread();
+
 
     void setVisible(bool visible) Q_DECL_OVERRIDE;
 
@@ -33,7 +35,7 @@ private slots:
 
     void showMessage();
     void messageClicked();
-    void mainThread();
+
     //void quit();
 
 private:
@@ -41,7 +43,6 @@ private:
     void createMessageGroupBox();
     void createActions();
     void createTrayIcon();
-
 
     QLabel *iconLabel;
     QPushButton *showMessageButton;
