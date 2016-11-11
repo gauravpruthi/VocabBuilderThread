@@ -50,7 +50,7 @@ void Window::mainThread()
         body.append(BaseData::getInstance()->getExample());
         showMessage();
         // Clear the data after use...it will be filled later after the next call..
-        QThread::sleep(30);
+        QThread::sleep(900);
     }
 }
 
